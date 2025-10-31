@@ -62,7 +62,16 @@ def load_my_model():
 def preprocess_image(img_file):
     try:
         # Open the image file from the uploader
-        img = Image.open(img_file).resize((224, 224))
+        img = Image.open(img_file)
+        
+        # 🔽🔽🔽 THIS IS THE FIX 🔽🔽🔽
+        # Convert the image to 3 channels (RGB)
+        # This handles both 4-channel RGBA and 1-channel Grayscale
+        img = img.convert('RGB')
+        # 🔼🔼🔼 END OF FIX 🔼🔼🔼
+        
+        # Now, resize
+        img = img.resize((224, 224))
         
         # Convert to NumPy array
         img_array = np.array(img)
