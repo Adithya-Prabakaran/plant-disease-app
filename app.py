@@ -9,9 +9,6 @@ import gdown  # Make sure 'gdown' is in your requirements.txt
 st.set_page_config(page_title="Plant Disease Diagnosis", layout="centered")
 
 # --- Google Drive File ID ---
-# IMPORTANT: Replace this with the ID from your Google Drive link
-# Example: If your link is "https.../d/1aBcDeFgHiJkLmNoPqRsTuVwXyZ/view?usp=sharing"
-# Your ID is "1aBcDeFgHiJkLmNoPqRsTuVwXyZ"
 GOOGLE_DRIVE_FILE_ID = "1QB8rvNBLAczVcZJMbrr_jaVQ_Jqfpkr0"
 MODEL_FILE_PATH = "plant_disease_model_efficientnetB0.h5"
 
@@ -35,7 +32,7 @@ class_names = [
 ]
 
 # --- Model Loading ---
-# Use st.cache_resource to load the model only once
+# Using st.cache_resource to load the model only once
 @st.cache_resource
 def load_my_model():
     # Check if model file already exists
@@ -64,12 +61,9 @@ def preprocess_image(img_file):
         # Open the image file from the uploader
         img = Image.open(img_file)
         
-        # 🔽🔽🔽 THIS IS THE FIX 🔽🔽🔽
         # Convert the image to 3 channels (RGB)
         # This handles both 4-channel RGBA and 1-channel Grayscale
-        img = img.convert('RGB')
-        # 🔼🔼🔼 END OF FIX 🔼🔼🔼
-        
+        img = img.convert('RGB')        
         # Now, resize
         img = img.resize((224, 224))
         
@@ -85,7 +79,6 @@ def preprocess_image(img_file):
 
 # --- Streamlit User Interface ---
 
-# Title of the app
 st.title("Plant Disease Diagnosis 🌿")
 st.write("Upload an image of a plant leaf and the AI will identify the disease.")
 
