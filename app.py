@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import os
-import gdown  # Make sure 'gdown' is in your requirements.txt
+import gdown  
 
 # --- Configuration ---
 st.set_page_config(page_title="Plant Disease Diagnosis", layout="centered")
