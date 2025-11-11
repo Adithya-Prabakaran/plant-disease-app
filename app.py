@@ -3,7 +3,8 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import os
-import gdown  
+import gdown
+import pandas as pd  # <-- NEW IMPORT
 
 # --- Configuration ---
 st.set_page_config(page_title="Plant Disease Diagnosis", layout="centered")
@@ -13,7 +14,6 @@ GOOGLE_DRIVE_FILE_ID = "1QB8rvNBLAczVcZJMbrr_jaVQ_Jqfpkr0"
 MODEL_FILE_PATH = "plant_disease_model_efficientnetB0.h5"
 
 # --- Class Names ---
-# Define the 38 class names in the correct order
 class_names = [
     'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 
     'Apple___healthy', 'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew',
@@ -31,18 +31,50 @@ class_names = [
     'Tomato___healthy'
 ]
 
+# -------------------------------------------------
+# --- NEW SECTION: PERFORMANCE METRICS SIDEBAR ---
+# -------------------------------------------------
+
+st.sidebar.title("Model Performance")
+st.sidebar.write("""
+The EfficientNetB0 model was trained on 70,295 images and 
+validated on 17,572 images from the "New Plant Diseases Dataset".
+""")
+
+# Data from your report 
+metrics_data = {
+    'Metric': ['Accuracy', 'Loss', 'Precision', 'Recall', 'F1-score'],
+    'Value': [0.976, 0.077, 0.977, 0.976, 0.976]
+}
+metrics_df = pd.DataFrame(metrics_data)
+metrics_df.set_index('Metric', inplace=True)
+
+# Display the table
+st.sidebar.subheader("Final Model Metrics")
+st.sidebar.dataframe(metrics_df.style.format("{:.3f}"))
+
+# Display the confusion matrix
+st.sidebar.subheader("Confusion Matrix")
+if os.path.exists("confusion_matrix.png"):
+    st.sidebar.image("confusion_matrix.png", caption="Confusion Matrix on 38 Classes")
+else:
+    st.sidebar.warning("`confusion_matrix.png` not found. Please upload it to your GitHub repo.")
+
+# -------------------------------------------------
+# --- END OF NEW SECTION ---
+# -------------------------------------------------
+
+
 # --- Model Loading ---
-# Using st.cache_resource to load the model only once
 @st.cache_resource
 def load_my_model():
     # Check if model file already exists
     if not os.path.exists(MODEL_FILE_PATH):
-        st.write("Model file not found. Downloading from Google Drive...")
-        # Download from Google Drive
+        # We removed the "Model not found" print
         try:
             download_url = f'https://drive.google.com/uc?id={GOOGLE_DRIVE_FILE_ID}'
             gdown.download(download_url, MODEL_FILE_PATH, quiet=False)
-            st.write("Model downloaded successfully.")
+            # We removed the "Model downloaded" print
         except Exception as e:
             st.error(f"Error downloading model: {e}")
             return None
@@ -62,8 +94,8 @@ def preprocess_image(img_file):
         img = Image.open(img_file)
         
         # Convert the image to 3 channels (RGB)
-        # This handles both 4-channel RGBA and 1-channel Grayscale
-        img = img.convert('RGB')        
+        img = img.convert('RGB')
+        
         # Now, resize
         img = img.resize((224, 224))
         
@@ -79,6 +111,7 @@ def preprocess_image(img_file):
 
 # --- Streamlit User Interface ---
 
+# Title of the app
 st.title("Plant Disease Diagnosis 🌿")
 st.write("Upload an image of a plant leaf and the AI will identify the disease.")
 
