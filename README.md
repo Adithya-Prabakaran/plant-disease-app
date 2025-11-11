@@ -1,4 +1,4 @@
-🌿 Plant Disease Diagnosis App (EfficientNetB0)
+# 🌿 Plant Disease Diagnosis App (EfficientNetB0)
 
 A deep learning web application to identify 38 different plant diseases from leaf images. This model achieved 97.6% accuracy and is deployed for free, public use on Streamlit Cloud.
 
